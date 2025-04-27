@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Candidature Animateur BAFA - Anael Maire</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1A4D80;
+            --secondary-color: #FF9F29;
+            --accent-color: #E7293D;
+            --background-gradient: linear-gradient(135deg, #1A4D80 0%, #4A8FBF 100%);
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0;
+            background: 
+                linear-gradient(45deg, rgba(250,250,250,0.95) 0%, rgba(245,245,245,0.95) 100%),
+                url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" opacity="0.03"><path fill="%231A4D80" d="M49,-42.5C59.8,-29.4,63.1,-9.5,58.7,8.6C54.3,26.6,42.2,42.8,25.3,53.7C8.5,64.6,-13.1,70.3,-30.7,63.7C-48.3,57.1,-61.9,38.3,-65.5,17.9C-69.1,-2.5,-62.7,-24.4,-49.9,-38.3C-37.1,-52.1,-17.5,-57.9,1.8,-59.3C21.1,-60.6,42.2,-57.5,49,-42.5Z"/></svg>');
+            color: var(--primary-color);
+        }
+
+        .container {
+            background: white;
+            padding: 0 40px 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+            transform: translateZ(0);
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 30px 60px;
+            background: var(--background-gradient);
+            color: white;
+            position: relative;
+            clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+        }
+
+        .profile-pic {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            margin: 0 auto 20px;
+            transition: transform 0.3s;
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+            font-size: 0.9em;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+
+        .section-title {
+            position: relative;
+            padding: 15px 25px;
+            margin: 40px -25px 25px;
+            background: rgba(255,159,41,0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-left: 5px solid var(--secondary-color);
+        }
+
+        .emoji-title {
+            background: var(--secondary-color);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4em;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        }
+
+        .highlight {
+            color: var(--accent-color);
+            font-weight: 600;
+            position: relative;
+        }
+
+        .signature {
+            margin-top: 40px;
+            padding: 30px;
+            background: rgba(26,77,128,0.05);
+            border-radius: 10px;
+            text-align: center;
+            position: relative;
+            border: 2px dashed var(--primary-color);
+        }
+
+        .signature::before {
+            content: "✍️";
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.8em;
+            background: white;
+            padding: 8px 20px;
+            border-radius: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        p {
+            margin-bottom: 1.2em;
+            text-align: justify;
+            position: relative;
+            z-index: 1;
+        }
+
+        .floating-icon {
+            position: absolute;
+            opacity: 0;
+            z-index: 0;
+            font-size: 10vw;
+        }
+
+        .small-text {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: -1em;
+            margin-bottom: 1.5em;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 15px;
+                padding: 0 20px 20px;
+            }
+
+            .header-section {
+                padding: 25px 20px 50px;
+            }
+
+            .contact-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .floating-icon {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Icônes flottantes décoratives - version discrète et harmonieuse -->
+        <i class="floating-icon" style="top:10%; left:5%;">🩺</i>
+        <i class="floating-icon" style="top:15%; right:8%;">👥</i>
+        <i class="floating-icon" style="top:30%; left:10%;">🎖️</i>        
+        <i class="floating-icon" style="top:40%; right:15%;">💟</i>   
+        <i class="floating-icon" style="top:50%; left:12%;">🤝</i>   
+        <i class="floating-icon" style="top:60%; right:10%;">🧑‍🎓</i>     
+        <i class="floating-icon" style="top:70%; left:15%;">🌟</i> 
+        <i class="floating-icon" style="top:80%; right:12%;">✨</i>   
+        <i class="floating-icon" style="top:90%; left:10%;">🌠</i>    
+        <i class="floating-icon" style="top:25%; right:5%;">🚑</i>    
+        <i class="floating-icon" style="top:35%; left:85%;">🥋</i>     
+        <i class="floating-icon" style="top:45%; right:85%;">🥊</i>  
+        <i class="floating-icon" style="top:55%; left:90%;">🪄</i>        
+        <i class="floating-icon" style="top:65%; right:90%;">⛑️</i>     
+        <i class="floating-icon" style="top:75%; left:85%;">🪖</i>         
+        <i class="floating-icon" style="top:85%; right:85%;">🇨🇵</i>
+
+        <div class="header-section">
+            <img src="https://github.com/Lost-Cyrano/stockage-link/blob/main/id.JPG?raw=true" 
+                 class="profile-pic" 
+                 alt="Photo is loading ...">
+            <h1>MAIRE Anael</h1>
+            <div class="contact-info">
+                <div class="contact-item">📧 anaelmaire@gmail.com</div>
+                <div class="contact-item">📱 07 81 45 08 56</div>
+                <div class="contact-item">📍 16 Rue de la Robeyere<br>05200 Embrun</div>
+                <div class="contact-item">👤 Tél. responsable :<br> 06 18 91 65 44</div>
+                <div class="contact-item">🎂 Né le : 12/01/2009</div>
+            </div>
+        </div>
+
+        <p>Madame,</p>
+
+        <p>Ayant récemment terminé mon BAFA 1 avec l'Aroeven - une expérience que je considère comme l'une des meilleures semaines de ma vie - j'ai obtenu la mention "Très bien", à un détail près de "l'excellence" que je compte bien atteindre lors de mon BAFA 2. Je souhaite aujourd'hui mettre à profit mes compétences et mon dynamisme en rejoignant votre équipe d'animation. Passionné par l'animation et particulièrement attiré par le domaine du secours, je suis motivé à apporter mon savoir-faire ainsi qu'un réel esprit d'équipe au service de vos activités.</p>
+
+        <div class="section-title">
+            <span class="emoji-title">🩺</span>
+            <h2>Compétences en secourisme</h2>
+        </div>
+        <p>En tant que secouriste PSE à la Croix Rouge ; formé aux PSC1 (dont je participe aux formations en tant que assistant formateur), niveau AFGSU-2, e-learning EPALS (Européan Pediatric Advanced Life Support), formation "glycémie" de la CRF, ainsi que de multiples qualifications opérationnelles telles que celle d'opérateur radio ; j'ai acquis de solides compétences dans le domaine de la sécurité et des premiers secours. Mon intérêt pour les secours m'a naturellement conduit à m'inscrire à la formation de Surveillant de Baignade (BAFA 3) que je passerai du 18 au 25 octobre.</p>
+
+        <div class="section-title">
+            <span class="emoji-title">🥋</span>
+            <h2>Engagements sportifs</h2>
+        </div>
+        <p>Parallèlement à mes engagements de secouriste, je pratique le Kung Fu Wushu en compétition au niveau national avec le club de Kung Fu Wushu Embrunais. Je participe aussi activement aux cours et aux activités sportives proposées par l'option sport du lycée et par l'association de l'UNSS, notamment en boxe française, escalade et musculation ; qui me permettent de développer discipline, rigueur, un esprit d'équipe et de réussite.</p>
+
+        <div class="section-title">
+            <span class="emoji-title">👥</span>
+            <h2>Vie associative</h2>
+        </div>
+        <p>Également très impliqué dans la vie associative de mon établissement - en tant que secrétaire général, siégeant au conseil de Vie Lycéen du lycée Honoré-Romane, me permettant la gestion de l'ensemble des présidences et des secrétariats des institutions lycéennes ; et en tant que vice-président de l'association de la Maison des Lycéens -, j'ai appris à organiser, communiquer et gérer des projets, des groupes de travail et des débats.</p>
+        
+        <div class="section-title">
+            <span class="emoji-title">🗣️</span>
+            <h2> Langues étudiées :</h2>
+        </div>
+        <p>🇫🇷 : ⭐⭐⭐⭐ <br> 🇬🇧 : ⭐⭐⭐ <br> 🇪🇸 : ⭐⭐ <br> 🇷🇺 : ⭐ </p>
+
+        <div class="section-title">
+            <span class="emoji-title">💼</span>
+            <h2>Disponibilité</h2>
+        </div>
+        <p>Disponible durant tout le mois de juillet, je suis prêt à m'investir pleinement dans votre structure, que ce soit pour effectuer mon stage pratique ou pour continuer à travailler avec votre équipe tout au long du mois. Cette période d'immersion me permettra de concrétiser mes apprentissages tout en contribuant activement à vos projets d'animation.</p>
+
+        <div class="signature">
+            <p>Je reste à votre disposition pour toute information complémentaire.<br>
+            Dans l'attente de votre réponse, je vous prie d'agréer, Madame, l'expression de mes salutations distinguées.</p>
+            <p><strong>MAIRE Anael</strong></p>
+        </div>
+    </div>
+</body>
+</html>
