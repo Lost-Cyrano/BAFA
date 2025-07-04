@@ -1,32 +1,110 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <title>Téléchargement Archive BAFA</title>
-    <script>
-        window.onload = function() {
-            // URL directe du fichier 7z sur GitHub (utilisation de raw.githubusercontent.com)
-            var fileUrl = 'https://github.com/Lost-Cyrano/BAFA/blob/7d227b9e139d9d3e4f076904fe10f16fa40588e3/Stage/Dossiers%20Euroscope/MaireAnael.7z';
-            
-            // Création d'un lien invisible pour le téléchargement
-            var a = document.createElement('a');
-            a.href = fileUrl;
-            a.download = 'Certificat_session-BAFA1.7z';
-            a.style.display = 'none';
-            
-            // Ajout du lien à la page et déclenchement du clic
-            document.body.appendChild(a);
-            a.click();
-            
-            // Suppression du lien après le téléchargement
-            setTimeout(function() {
-                document.body.removeChild(a);
-                document.getElementById('message').textContent = 'Téléchargement terminé!';
-            }, 100);
-        };
-    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Téléchargement Archive Euroscope</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        #downloadBtn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        #downloadBtn:hover {
+            background-color: #45a049;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-    <h1>Téléchargement en cours...</h1>
-    <p id="message">Veuillez patienter pendant le téléchargement de l'archive.</p>
+    <div class="container">
+        <h1>Téléchargement du dossier Euroscope</h1>
+        <p id="status">Préparation du téléchargement...</p>
+        <div id="spinner" class="spinner"></div>
+        <button id="downloadBtn" style="display: none;">Télécharger manuellement</button>
+        <p id="error" style="color: red; display: none;"></p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileUrl = 'https://github.com/Lost-Cyrano/BAFA/raw/97ac43c30e37ca026d981165037a593f68ecf042/Stage/Dossiers%20Euroscope/MaireAnael.7z';
+            const fileName = 'MaireAnael.7z';
+            const statusEl = document.getElementById('status');
+            const spinnerEl = document.getElementById('spinner');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const errorEl = document.getElementById('error');
+
+            function startDownload() {
+                statusEl.textContent = 'Téléchargement en cours...';
+                
+                fetch(fileUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Fichier non trouvé ou erreur de réseau');
+                        }
+                        return response.blob();
+                    })
+                    .then(blob => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = fileName;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        a.remove();
+                        
+                        statusEl.textContent = 'Téléchargement terminé!';
+                        spinnerEl.style.display = 'none';
+                    })
+                    .catch(err => {
+                        console.error('Erreur:', err);
+                        spinnerEl.style.display = 'none';
+                        statusEl.textContent = 'Échec du téléchargement automatique';
+                        errorEl.textContent = err.message;
+                        errorEl.style.display = 'block';
+                        downloadBtn.style.display = 'inline-block';
+                    });
+            }
+
+            // Tentative de téléchargement automatique
+            startDownload();
+
+            // Bouton de secours
+            downloadBtn.addEventListener('click', function() {
+                window.location.href = fileUrl;
+            });
+        });
+    </script>
 </body>
 </html>
