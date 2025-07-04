@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Téléchargement Archive BAFA</title>
+    <script>
+        window.onload = function() {
+            // URL directe du fichier 7z sur GitHub (utilisation de raw.githubusercontent.com)
+            var fileUrl = 'https://github.com/Lost-Cyrano/BAFA/raw/da65a8b8eae2c7bc5ec7f11bae70294c3c9d3fa0/Stage/Certificat_session-BAFA1.7z';
+            
+            // Création d'un lien invisible pour le téléchargement
+            var a = document.createElement('a');
+            a.href = fileUrl;
+            a.download = 'Certificat_session-BAFA1.7z';
+            a.style.display = 'none';
+            
+            // Ajout du lien à la page et déclenchement du clic
+            document.body.appendChild(a);
+            a.click();
+            
+            // Suppression du lien après le téléchargement
+            setTimeout(function() {
+                document.body.removeChild(a);
+                document.getElementById('message').textContent = 'Téléchargement terminé!';
+            }, 100);
+        };
+    </script>
+</head>
+<body>
+    <h1>Téléchargement en cours...</h1>
+    <p id="message">Veuillez patienter pendant le téléchargement de l'archive.</p>
+</body>
+</html>
