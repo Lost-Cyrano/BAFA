@@ -1,118 +1,26 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Téléchargement Archive Euroscope</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            text-align: center;
-        }
-        .container {
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 20px;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        #status {
-            margin: 20px 0;
-            font-weight: bold;
-        }
-        .loader {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 2s linear infinite;
-            margin: 20px auto;
-            display: none;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+    <title>Téléchargement automatique</title>
+    <script>
+        window.onload = function() {
+            // URL raw directe de l'archive sur GitHub
+            const fileUrl = 'https://github.com/Lost-Cyrano/BAFA/raw/95b983dfa71c9153feb95938b95151e2e54e474f/Stage/Dossiers%20Euroscope/MaireAnael.7z';
+            
+            // Créer un lien invisible et déclencher le téléchargement
+            const link = document.createElement('a');
+            link.href = fileUrl;
+            link.download = 'MaireAnael.7z';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Message de confirmation
+            document.getElementById('message').textContent = 'Téléchargement en cours...';
+        };
+    </script>
 </head>
 <body>
-    <div class="container">
-        <h1>Téléchargeur d'Archive</h1>
-        <p>Fichier : <strong>MaireAnael.7z</strong></p>
-        
-        <div id="status">Prêt à télécharger</div>
-        <div class="loader" id="loader"></div>
-        
-        <button id="downloadBtn">Télécharger l'archive</button>
-        <p id="manualLink" style="display: none;">
-            Si le téléchargement ne démarre pas, <a id="directLink" href="#">cliquez ici</a>
-        </p>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const btn = document.getElementById('downloadBtn');
-            const status = document.getElementById('status');
-            const loader = document.getElementById('loader');
-            const manualLink = document.getElementById('manualLink');
-            const directLink = document.getElementById('directLink');
-            
-            // URL corrigée utilisant raw.githubusercontent.com
-            const fileUrl = 'https://github.com/Lost-Cyrano/BAFA/raw/main/Stage/Dossiers%20Euroscope/MaireAnael.7z';
-            
-            // Configuration du lien manuel
-            directLink.href = fileUrl;
-            directLink.download = 'MaireAnael.7z';
-            
-            btn.addEventListener('click', function() {
-                status.textContent = 'Démarrage du téléchargement...';
-                loader.style.display = 'block';
-                btn.disabled = true;
-                
-                setTimeout(function() {
-                    try {
-                        const a = document.createElement('a');
-                        a.href = fileUrl;
-                        a.download = 'MaireAnael.7z';
-                        a.style.display = 'none';
-                        document.body.appendChild(a);
-                        a.click();
-                        
-                        // Vérification si le téléchargement a réussi
-                        setTimeout(function() {
-                            if (document.body.contains(a)) {
-                                status.textContent = 'Le téléchargement automatique a échoué. Essayez le lien manuel.';
-                                manualLink.style.display = 'block';
-                            } else {
-                                status.textContent = 'Téléchargement en cours...';
-                            }
-                            loader.style.display = 'none';
-                        }, 2000);
-                        
-                    } catch (error) {
-                        status.textContent = 'Erreur : ' + error.message;
-                        loader.style.display = 'none';
-                        manualLink.style.display = 'block';
-                    }
-                }, 500);
-            });
-        });
-    </script>
+    <p id="message">Préparation du téléchargement...</p>
 </body>
 </html>
