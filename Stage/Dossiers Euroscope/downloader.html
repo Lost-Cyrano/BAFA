@@ -4,23 +4,31 @@
     <title>Téléchargement automatique</title>
     <script>
         window.onload = function() {
-            // URL raw directe de l'archive sur GitHub
-            const fileUrl = 'https://github.com/Lost-Cyrano/BAFA/raw/95b983dfa71c9153feb95938b95151e2e54e474f/Stage/Dossiers%20Euroscope/MaireAnael.7z';
+            // URL de téléchargement direct (avec paramètre raw=true)
+            const fileUrl = "https://github.com/Lost-Cyrano/BAFA/raw/main/Stage/Dossiers%20Euroscope/MaireAnael.7z";
             
-            // Créer un lien invisible et déclencher le téléchargement
+            // Création d'un lien invisible
             const link = document.createElement('a');
             link.href = fileUrl;
             link.download = 'MaireAnael.7z';
             document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
             
-            // Message de confirmation
-            document.getElementById('message').textContent = 'Téléchargement en cours...';
-        };
+            // Déclenchement du téléchargement
+            link.click();
+            
+            // Message utilisateur
+            document.body.innerHTML = '<h1>Téléchargement en cours...</h1>' +
+                                      '<p>Si le téléchargement ne démarre pas, ' +
+                                      '<a href="' + fileUrl + '">cliquez ici</a></p>';
+        }
     </script>
 </head>
 <body>
-    <p id="message">Préparation du téléchargement...</p>
+    <noscript>
+        <h1>Activez JavaScript pour le téléchargement automatique</h1>
+        <p>Téléchargez manuellement : 
+        <a href="https://github.com/Lost-Cyrano/BAFA/raw/95b983dfa71c9153feb95938b95151e2e54e474f/Stage/Dossiers%20Euroscope/MaireAnael.7z">MaireAnael.7z</a>
+        </p>
+    </noscript>
 </body>
 </html>
