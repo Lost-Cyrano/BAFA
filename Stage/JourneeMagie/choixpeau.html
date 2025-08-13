@@ -2,83 +2,123 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Choixpeau Harry Potter</title>
+<title>Choixpeau Magique</title>
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
+
     body {
-        font-family: 'Segoe UI', sans-serif;
-        text-align: center;
-        background-color: #111;
-        color: gold;
         margin: 0;
-        padding: 20px;
+        font-family: 'MedievalSharp', cursive;
+        background: url('https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?fit=crop&w=1920&q=80') no-repeat center center fixed;
+        background-size: cover;
+        color: gold;
+        text-align: center;
     }
+
+    #content {
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 30px;
+        border-radius: 15px;
+        max-width: 700px;
+        margin: 80px auto;
+        box-shadow: 0 0 20px gold;
+    }
+
     h1 {
-        font-size: 2em;
+        font-size: 3em;
         margin-bottom: 20px;
+        text-shadow: 2px 2px 8px black;
     }
+
     .controls {
         margin: 20px 0;
     }
+
     input[type="range"] {
         width: 300px;
     }
+
     button {
-        font-size: 18px;
-        padding: 10px 20px;
-        margin: 10px;
-        background-color: #333;
-        color: gold;
+        font-size: 20px;
+        padding: 12px 25px;
+        margin: 15px;
         border: 2px solid gold;
+        border-radius: 10px;
+        background-color: rgba(30, 30, 30, 0.8);
+        color: gold;
         cursor: pointer;
-        border-radius: 8px;
         transition: 0.3s;
     }
+
     button:hover {
         background-color: gold;
-        color: #111;
+        color: black;
+        transform: scale(1.1);
+    }
+
+    footer {
+        margin-top: 30px;
+        font-size: 14px;
+        opacity: 0.7;
     }
 </style>
 </head>
 <body>
 
 <div id="content" style="display:none;">
-    <h1>Bienvenue au Choixpeau Magique</h1>
+    <h1>🎩 Bienvenue au Choixpeau Magique 🎩</h1>
+
     <div class="controls">
-        <label>Volume musique : </label>
+        <label>Volume musique :</label><br>
         <input type="range" id="volumeSlider" min="0" max="200" value="100">
     </div>
+
     <div>
-        <button onclick="playHouse('gryffondor.mp3')">Gryffondor</button>
-        <button onclick="playHouse('poufsouffle.mp3')">Poufsouffle</button>
-        <button onclick="playHouse('serdaigle.mp3')">Serdaigle</button>
-        <button onclick="playHouse('serpentard.mp3')">Serpentard</button>
+        <button onclick="playHouse('gryffondor.mp3')">🦁 Gryffondor</button>
+        <button onclick="playHouse('poufsouffle.mp3')">🦡 Poufsouffle</button>
+        <button onclick="playHouse('serdaigle.mp3')">🦅 Serdaigle</button>
+        <button onclick="playHouse('serpentard.mp3')">🐍 Serpentard</button>
     </div>
+
+    <footer>© Poudlard - Ministère de la Magie</footer>
 </div>
 
-<audio id="backgroundMusic" src="Prologue.mp4" loop autoplay></audio>
+<audio id="backgroundMusic" src="Prologue.mp3" loop autoplay></audio>
 <audio id="houseAudio"></audio>
 
 <script>
-    // Demande le code avant d'afficher
+    // Code d'accès
     let code = prompt("Entrez le code d'accès :");
     if (code === "132") {
         document.getElementById("content").style.display = "block";
         let music = document.getElementById("backgroundMusic");
-        music.volume = 1.0; 
+        music.volume = 1.0;
         music.play().catch(err => console.log("Lecture auto bloquée : ", err));
     } else {
         alert("Code incorrect !");
     }
 
-    // Curseur de volume (0% à 200%)
+    // Curseur volume avec boost (0% à 200%)
     document.getElementById("volumeSlider").addEventListener("input", function() {
         let sliderValue = this.value;
         let music = document.getElementById("backgroundMusic");
+
+        // Volume normal de 0 à 100%
         music.volume = Math.min(sliderValue / 100, 1);
-        music.playbackRate = sliderValue > 100 ? 1 + (sliderValue - 100) / 200 : 1;
+
+        // Boost audio via Web Audio API
+        if (!music.audioCtx) {
+            music.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            music.source = music.audioCtx.createMediaElementSource(music);
+            music.gainNode = music.audioCtx.createGain();
+            music.source.connect(music.gainNode);
+            music.gainNode.connect(music.audioCtx.destination);
+        }
+        let boost = sliderValue > 100 ? (sliderValue / 100) : (sliderValue / 100);
+        music.gainNode.gain.value = boost;
     });
 
-    // Lecture des sons des maisons
+    // Lecture des sons de maisons
     function playHouse(file) {
         let audio = document.getElementById("houseAudio");
         audio.src = file;
