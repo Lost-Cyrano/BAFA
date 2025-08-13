@@ -1,379 +1,90 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Le Choipeaux – Répartition des Maisons</title>
-<meta name="description" content="Le Choipeaux magique répartit les maisons, avec musique Harry Potter en fond et contrôle du volume." />
-
+<meta charset="UTF-8">
+<title>Choixpeau Harry Potter</title>
 <style>
-  :root{
-    --bg:#0b0d12; --card:#131722; --muted:#a7b1c2; --primary:#f6e58d; --accent:#c4a962;
-    --gry:#d43c3c; --pou:#e0b82f; --serd:#3f7edb; --serp:#1aa364;
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
-    background: radial-gradient(1200px 800px at 80% -10%, #1a2030 0%, #0b0d12 50%, #080a0f 100%);
-    color:#e9eef6;
-    min-height:100dvh; display:flex; align-items:center; justify-content:center; padding:24px;
-  }
-  .shell{
-    width:min(100%, 980px); background: linear-gradient(180deg, #141a26 0%, #101521 100%);
-    border:1px solid #2a3345; border-radius:24px; box-shadow: 0 30px 80px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.03);
-    padding:20px 20px 28px;
-  }
-  header{
-    display:flex; gap:14px; align-items:center; justify-content:space-between; margin-bottom:10px; flex-wrap:wrap;
-  }
-  .title{
-    display:flex; gap:14px; align-items:center;
-  }
-  .wand{
-    width:44px; height:44px; border-radius:12px; background: conic-gradient(from 0deg, #2a3345, #101521, #2a3345);
-    display:grid; place-items:center; box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 8px 30px rgba(0,0,0,.35);
-  }
-  .wand span{font-size:24px}
-  h1{font-size: clamp(20px, 4vw, 28px); margin:0; letter-spacing:.4px}
-  .hint{color:#9fb1cc; font-size:14px}
-
-  .controls{
-    display:grid; grid-template-columns: 1fr auto; gap:14px; align-items:center; margin-top:8px;
-  }
-  .volume{
-    background:#0f1420; border:1px solid #2a3345; padding:12px 14px; border-radius:12px;
-    display:flex; align-items:center; gap:12px;
-  }
-  input[type="range"]{
-    width:220px; accent-color: var(--accent);
-  }
-  button{
-    cursor:pointer; border:0; border-radius:14px; padding:12px 16px; font-weight:600;
-    color:#0b0d12; background: linear-gradient(180deg, #f6e58d, #d7c26b);
-    box-shadow: 0 10px 24px rgba(246,229,141,.22), inset 0 1px 0 rgba(255,255,255,.6);
-    transition: transform .04s ease;
-  }
-  button:active{ transform: translateY(1px) }
-
-  .grid{
-    margin-top:18px; display:grid; grid-template-columns: 1fr 1fr; gap:16px;
-  }
-
-  .hatcard{
-    grid-column: 1 / -1;
-    background: radial-gradient(800px 400px at 100% 0%, rgba(250, 233, 133, .06), transparent 60%), #0e1420;
-    border:1px solid #2a3345; border-radius:18px; padding:16px;
-    display:grid; grid-template-columns: 1fr auto; gap:14px; align-items:center;
-  }
-  .houses{
-    display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:10px;
-  }
-  .house{
-    background:#0f1726; border:1px solid #2a3345; border-radius:14px; padding:12px; text-align:center;
-    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-    position:relative; overflow:hidden;
-  }
-  .house .emoji{font-size:24px; display:block}
-  .house .label{font-weight:700; margin-top:6px; font-size:14px}
-  .house.active{ transform: translateY(-2px) scale(1.02); box-shadow: 0 16px 40px rgba(0,0,0,.45)}
-  .house.gry{ border-color: var(--gry) }
-  .house.pou{ border-color: var(--pou) }
-  .house.serd{ border-color: var(--serd) }
-  .house.serp{ border-color: var(--serp) }
-
-  .hatButton{
-    display:grid; grid-auto-flow:column; gap:10px; align-items:center;
-    padding:14px 16px; border-radius:16px;
-    background: linear-gradient(180deg, #252f46, #182033);
-    color:#e9eef6; box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
-    border:1px solid #2a3345;
-  }
-  .hatButton b{ color:var(--primary); text-shadow: 0 1px 0 rgba(0,0,0,.4) }
-
-  .banner{
-    margin-top:16px; text-align:center; font-size: clamp(20px, 4vw, 36px); font-weight:800; letter-spacing:.6px;
-  }
-  .banner .name{ padding:4px 10px; border-radius:12px }
-  .name.gry{ background: rgba(212,60,60,.18); border:1px solid rgba(212,60,60,.6) }
-  .name.pou{ background: rgba(224,184,47,.18); border:1px solid rgba(224,184,47,.6) }
-  .name.serd{ background: rgba(63,126,219,.18); border:1px solid rgba(63,126,219,.6) }
-  .name.serp{ background: rgba(26,163,100,.18); border:1px solid rgba(26,163,100,.6) }
-
-  .ytWrap{
-    display:none; /* caché mais présent pour l’audio */
-  }
-
-  footer{
-    margin-top:18px; color:#8fa3bf; font-size:12px; text-align:center;
-  }
-
-  @media (max-width:700px){
-    .grid{ grid-template-columns: 1fr }
-    .houses{ grid-template-columns: repeat(2, minmax(0,1fr)) }
-  }
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        text-align: center;
+        background-color: #111;
+        color: gold;
+        margin: 0;
+        padding: 20px;
+    }
+    h1 {
+        font-size: 2em;
+        margin-bottom: 20px;
+    }
+    .controls {
+        margin: 20px 0;
+    }
+    input[type="range"] {
+        width: 300px;
+    }
+    button {
+        font-size: 18px;
+        padding: 10px 20px;
+        margin: 10px;
+        background-color: #333;
+        color: gold;
+        border: 2px solid gold;
+        cursor: pointer;
+        border-radius: 8px;
+        transition: 0.3s;
+    }
+    button:hover {
+        background-color: gold;
+        color: #111;
+    }
 </style>
 </head>
 <body>
-  <div class="shell" role="application" aria-label="Choipeaux – application de répartition">
-    <header>
-      <div class="title">
-        <div class="wand" aria-hidden="true"><span>🧙‍♂️</span></div>
-        <div>
-          <h1>La Magie s’empare du Club – <span style="color:var(--primary)">Le Choipeaux</span></h1>
-          <div class="hint">Musique officielle en fond (playlist YouTube), volume réglable, et tirage du Choipeaux avec annonce vocale.</div>
-        </div>
-      </div>
 
-      <div class="controls" aria-label="Contrôles audio">
-        <div class="volume" title="Régler le volume de la musique de fond">
-          <span aria-hidden="true">🎵</span>
-          <label for="vol">Volume</label>
-          <input id="vol" type="range" min="0" max="100" value="25" />
-          <output id="volOut" for="vol">25%</output>
-        </div>
-        <button id="playBtn" type="button" aria-pressed="false" title="Démarrer / Mettre en pause la musique">▶️ Lecture</button>
-      </div>
-    </header>
-
-    <section class="grid">
-      <div class="hatcard">
-        <div>
-          <div style="font-weight:700; margin-bottom:6px">Répartition des Maisons</div>
-          <div style="color:#9fb1cc; font-size:14px">Clique sur le bouton du <b>Choipeaux</b> pour choisir la maison aléatoirement et l’entendre l’annoncer.</div>
-          <div class="houses" style="margin-top:12px">
-            <div class="house gry" data-house="Gryffondor" aria-label="Gryffondor">
-              <span class="emoji">🦁</span>
-              <div class="label">Gryffondor</div>
-            </div>
-            <div class="house pou" data-house="Poufsouffle" aria-label="Poufsouffle">
-              <span class="emoji">🦡</span>
-              <div class="label">Poufsouffle</div>
-            </div>
-            <div class="house serd" data-house="Serdaigle" aria-label="Serdaigle">
-              <span class="emoji">🦅</span>
-              <div class="label">Serdaigle</div>
-            </div>
-            <div class="house serp" data-house="Serpentard" aria-label="Serpentard">
-              <span class="emoji">🐍</span>
-              <div class="label">Serpentard</div>
-            </div>
-          </div>
-        </div>
-        <div>
-          <button id="sortBtn" type="button" class="hatButton" title="Lancer le Choipeaux">
-            <span aria-hidden="true">🎩</span>
-            <span>Le <b>Choipeaux</b> décide !</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="banner" aria-live="polite">
-        <span id="result" class="name" style="display:none"></span>
-      </div>
-    </section>
-
-    <footer>
-      Tip : si la musique ne démarre pas, effectue une action (cliquer un bouton, bouger le curseur). Les navigateurs bloquent l’autoplay non sollicité.
-    </footer>
-
-    <!-- Lecteur YouTube caché pour la musique de fond -->
-    <div class="ytWrap">
-      <div id="player" aria-hidden="true"></div>
+<div id="content" style="display:none;">
+    <h1>Bienvenue au Choixpeau Magique</h1>
+    <div class="controls">
+        <label>Volume musique : </label>
+        <input type="range" id="volumeSlider" min="0" max="200" value="100">
     </div>
-  </div>
+    <div>
+        <button onclick="playHouse('gryffondor.mp3')">Gryffondor</button>
+        <button onclick="playHouse('poufsouffle.mp3')">Poufsouffle</button>
+        <button onclick="playHouse('serdaigle.mp3')">Serdaigle</button>
+        <button onclick="playHouse('serpentard.mp3')">Serpentard</button>
+    </div>
+</div>
+
+<audio id="backgroundMusic" src="harrypotter.mp3" loop autoplay></audio>
+<audio id="houseAudio"></audio>
 
 <script>
-/** ================================
- *  🎵 YouTube Player – musique de fond
- *  ================================
- */
-const YT_PLAYLIST_ID = "PLYXfr3Na3Iuf8Kg__C6Fll5bapkVOXp9b"; // votre playlist officielle
-let ytPlayer = null;
-let isPlaying = false;
-
-// Charger l’API IFrame YouTube
-(function loadYT(){
-  const tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/iframe_api";
-  document.head.appendChild(tag);
-})();
-
-function onYouTubeIframeAPIReady(){
-  ytPlayer = new YT.Player('player', {
-    height: '0',
-    width: '0',
-    playerVars: {
-      autoplay: 0, // démarrera après interaction
-      controls: 0,
-      loop: 1,
-      modestbranding: 1,
-      rel: 0,
-      listType: 'playlist',
-      list: YT_PLAYLIST_ID,
-      // nécessaire pour boucler : répéter la même playlist dans 'playlist'
-      playlist: YT_PLAYLIST_ID
-    },
-    events: {
-      'onReady': onPlayerReady,
-      'onStateChange': onPlayerStateChange
+    // Demande le code avant d'afficher
+    let code = prompt("Entrez le code d'accès :");
+    if (code === "132") {
+        document.getElementById("content").style.display = "block";
+        let music = document.getElementById("backgroundMusic");
+        music.volume = 1.0; 
+        music.play().catch(err => console.log("Lecture auto bloquée : ", err));
+    } else {
+        alert("Code incorrect !");
     }
-  });
-}
 
-function onPlayerReady(){
-  // Appliquer volume initial
-  const vol = document.getElementById('vol').value;
-  if(ytPlayer && ytPlayer.setVolume) ytPlayer.setVolume(Number(vol));
-}
+    // Curseur de volume (0% à 200%)
+    document.getElementById("volumeSlider").addEventListener("input", function() {
+        let sliderValue = this.value;
+        let music = document.getElementById("backgroundMusic");
+        music.volume = Math.min(sliderValue / 100, 1);
+        music.playbackRate = sliderValue > 100 ? 1 + (sliderValue - 100) / 200 : 1;
+    });
 
-function onPlayerStateChange(e){
-  // 1 = playing, 2 = paused
-  if(e.data === YT.PlayerState.PLAYING){ isPlaying = true; refreshPlayBtn(); }
-  if(e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED){ isPlaying = false; refreshPlayBtn(); }
-}
-
-function togglePlay(){
-  if(!ytPlayer) return;
-  try{
-    if(isPlaying){ ytPlayer.pauseVideo(); }
-    else { ytPlayer.playVideo(); }
-  }catch(err){ console.warn(err); }
-}
-function setVolume(v){
-  if(ytPlayer && ytPlayer.setVolume){ ytPlayer.setVolume(Number(v)); }
-}
-function refreshPlayBtn(){
-  const btn = document.getElementById('playBtn');
-  if(isPlaying){ btn.textContent = "⏸️ Pause"; btn.setAttribute('aria-pressed','true'); }
-  else { btn.textContent = "▶️ Lecture"; btn.setAttribute('aria-pressed','false'); }
-}
-
-/** ================================
- *  🎩 Choipeaux – tirage & annonce vocale
- *  ================================
- */
-const HOUSES = [
-  { key:'gry', name:'Gryffondor', icon:'🦁', color:'var(--gry)',
-    phrases:[
-      "Courage, bravoure... oui, je vois très clairement... GRYFFONDOR !",
-      "Un cœur vaillant, une tête haute... cela crie GRYFFONDOR !",
-      "L’audace et la détermination ? Ce sera GRYFFONDOR !"
-    ]
-  },
-  { key:'pou', name:'Poufsouffle', icon:'🦡', color:'var(--pou)',
-    phrases:[
-      "Loyauté, patience, travail… cela ne trompe pas : POUFSOUFFLE !",
-      "Je sens la bonté et la persévérance… POUFSOUFFLE !",
-      "Là où résident les justes et les fidèles : POUFSOUFFLE !"
-    ]
-  },
-  { key:'serd', name:'Serdaigle', icon:'🦅', color:'var(--serd)',
-    phrases:[
-      "Esprit vif, soif de savoir… cela sonne SERDAIGLE !",
-      "Intelligence et créativité ? SERDAIGLE !",
-      "Là où l’on chérit l’esprit et la sagesse : SERDAIGLE !"
-    ]
-  },
-  { key:'serp', name:'Serpentard', icon:'🐍', color:'var(--serp)',
-    phrases:[
-      "Ambition, ruse et détermination… je choisis SERPENTARD !",
-      "Je vois une grande ambition… SERPENTARD !",
-      "Pour ceux qui se taillent leur destin : SERPENTARD !"
-    ]
-  }
-];
-
-// Utilitaire : attendre
-const wait = (ms) => new Promise(res => setTimeout(res, ms));
-
-// Synthèse vocale (bande-son du Choipeaux)
-function speak(text){
-  const utter = new SpeechSynthesisUtterance(text);
-  // Essayer une voix française
-  const voices = window.speechSynthesis.getVoices();
-  const fr = voices.find(v => /fr/i.test(v.lang)) || voices[0];
-  if(fr) utter.voice = fr;
-  utter.lang = fr?.lang || 'fr-FR';
-  utter.rate = 0.98; // rythme posé
-  utter.pitch = 0.95; // un peu grave
-  speechSynthesis.cancel(); // stoppe toute lecture en cours
-  speechSynthesis.speak(utter);
-}
-
-// Met en surbrillance la maison gagnante
-function highlightHouse(key){
-  document.querySelectorAll('.house').forEach(el => el.classList.remove('active'));
-  const target = document.querySelector(`.house.${key}`);
-  if(target){ target.classList.add('active'); }
-}
-
-// Affiche le bandeau de résultat
-function showResult(name, key){
-  const res = document.getElementById('result');
-  res.className = `name ${key}`;
-  res.textContent = name.toUpperCase() + " !";
-  res.style.display = 'inline-block';
-}
-
-// Logique principale du Choipeaux
-async function runSorting(){
-  // Démarre la musique si pas encore lancée (interaction utilisateur confirmée)
-  if(ytPlayer && !isPlaying){
-    try{ ytPlayer.playVideo(); }catch(e){}
-  }
-  // Animation de "réflexion"
-  const introLines = [
-    "Hmm... voyons voir…",
-    "Intéressant… très intéressant…",
-    "Oh ! Difficile… mais je crois que…"
-  ];
-  speak(introLines[Math.floor(Math.random()*introLines.length)]);
-
-  // Petite attente dramatique
-  await wait(1100 + Math.random()*600);
-
-  // Choisir une maison
-  const house = HOUSES[Math.floor(Math.random()*HOUSES.length)];
-
-  // Highlight & bandeau
-  highlightHouse(house.key);
-  showResult(house.name, house.key);
-
-  // Annonce
-  await wait(400);
-  speak(house.phrases[Math.floor(Math.random()*house.phrases.length)]);
-}
-
-/** ================================
- *  🔗 Écouteurs UI
- *  ================================
- */
-document.getElementById('playBtn').addEventListener('click', togglePlay);
-const volInput = document.getElementById('vol');
-const volOut = document.getElementById('volOut');
-volInput.addEventListener('input', (e)=>{
-  const v = e.target.value;
-  volOut.textContent = `${v}%`;
-  setVolume(v);
-});
-document.getElementById('sortBtn').addEventListener('click', runSorting);
-
-// Permettre la sélection tactile visuelle
-document.querySelectorAll('.house').forEach(h => {
-  h.addEventListener('click', ()=>{
-    const key = [...h.classList].find(c => ['gry','pou','serd','serp'].includes(c));
-    const item = HOUSES.find(x => x.key === key);
-    highlightHouse(key);
-    showResult(item.name, item.key);
-    speak(item.phrases[Math.floor(Math.random()*item.phrases.length)]);
-  });
-});
-
-// iOS fix : charger les voix après interaction
-document.addEventListener('click', function initTTSOnce(){
-  window.speechSynthesis.getVoices();
-  document.removeEventListener('click', initTTSOnce);
-}, {once:true});
+    // Lecture des sons des maisons
+    function playHouse(file) {
+        let audio = document.getElementById("houseAudio");
+        audio.src = file;
+        audio.play();
+    }
 </script>
+
 </body>
 </html>
