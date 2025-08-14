@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sonomètre avec Alerte</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .meter {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .level {
+            height: 100%;
+            background: linear-gradient(to right, #4CAF50, #FFC107, #F44336);
+            width: 0%;
+            transition: width 0.1s;
+        }
+        .db-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .alert {
+            color: #F44336;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .threshold-control {
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔊 Sonomètre avec Alerte</h1>
+        <p>Mesure du niveau sonore en temps réel</p>
+        
+        <div class="meter">
+            <div class="level" id="level"></div>
+        </div>
+        
+        <div class="db-value" id="dbValue">0 dB</div>
+        
+        <div class="alert" id="alert" style="display: none;">⚠️ DÉPASSEMENT DU SEUIL !</div>
+        
+        <div class="threshold-control">
+            <label for="threshold">Seuil d'alerte (dB) :</label>
+            <input type="range" id="threshold" min="0" max="100" value="70">
+            <span id="thresholdValue">70 dB</span>
+        </div>
+        
+        <button id="startBtn">Démarrer le Micro</button>
+    </div>
+
+    <audio id="alertSound" src="https://assets.mixkit.co/active_storage/sfx/2129/2129-preview.mp3" preload="auto"></audio>
+
+    <script>
+        const startBtn = document.getElementById('startBtn');
+        const dbValue = document.getElementById('dbValue');
+        const level = document.getElementById('level');
+        const alertDiv = document.getElementById('alert');
+        const thresholdSlider = document.getElementById('threshold');
+        const thresholdValue = document.getElementById('thresholdValue');
+        const alertSound = document.getElementById('alertSound');
+
+        let audioContext;
+        let microphone;
+        let analyser;
+        let isRunning = false;
+        let lastAlertTime = 0;
+
+        // Mise à jour du seuil affiché
+        thresholdSlider.addEventListener('input', () => {
+            thresholdValue.textContent = `${thresholdSlider.value} dB`;
+        });
+
+        // Démarrer/Arrêter le micro
+        startBtn.addEventListener('click', async () => {
+            if (!isRunning) {
+                try {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    microphone = audioContext.createMediaStreamSource(stream);
+                    analyser = audioContext.createAnalyser();
+                    analyser.fftSize = 256;
+                    
+                    microphone.connect(analyser);
+                    
+                    const bufferLength = analyser.frequencyBinCount;
+                    const dataArray = new Uint8Array(bufferLength);
+                    
+                    isRunning = true;
+                    startBtn.textContent = "Arrêter le Micro";
+                    
+                    function updateMeter() {
+                        if (!isRunning) return;
+                        
+                        analyser.getByteFrequencyData(dataArray);
+                        let sum = 0;
+                        
+                        for (let i = 0; i < bufferLength; i++) {
+                            sum += dataArray[i];
+                        }
+                        
+                        const average = sum / bufferLength;
+                        const db = Math.round(average);
+                        
+                        dbValue.textContent = `${db} dB`;
+                        level.style.width = `${db}%`;
+                        
+                        // Vérifier le seuil d'alerte
+                        const threshold = parseInt(thresholdSlider.value);
+                        const now = Date.now();
+                        
+                        if (db > threshold) {
+                            alertDiv.style.display = 'block';
+                            // Éviter les bips trop rapprochés (min 1s)
+                            if (now - lastAlertTime > 1000) {
+                                alertSound.currentTime = 0;
+                                alertSound.play();
+                                lastAlertTime = now;
+                            }
+                        } else {
+                            alertDiv.style.display = 'none';
+                        }
+                        
+                        requestAnimationFrame(updateMeter);
+                    }
+                    
+                    updateMeter();
+                } catch (error) {
+                    alert("Erreur : " + error.message);
+                    console.error(error);
+                }
+            } else {
+                if (microphone) {
+                    microphone.disconnect();
+                }
+                isRunning = false;
+                startBtn.textContent = "Démarrer le Micro";
+                dbValue.textContent = "0 dB";
+                level.style.width = "0%";
+                alertDiv.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
