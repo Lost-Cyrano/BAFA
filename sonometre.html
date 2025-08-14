@@ -1,181 +1,353 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sonomètre avec Alerte</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 20px;
-            background-color: #f0f0f0;
-        }
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #333;
-        }
-        .meter {
-            width: 100%;
-            height: 30px;
-            background: #e0e0e0;
-            border-radius: 15px;
-            margin: 20px 0;
-            overflow: hidden;
-        }
-        .level {
-            height: 100%;
-            background: linear-gradient(to right, #4CAF50, #FFC107, #F44336);
-            width: 0%;
-            transition: width 0.1s;
-        }
-        .db-value {
-            font-size: 24px;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-        .alert {
-            color: #F44336;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-        .threshold-control {
-            margin: 20px 0;
-        }
-        button {
-            padding: 10px 20px;
-            background: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background: #45a049;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sonomètre & Alerte seuil (fichier unique)</title>
+  <style>
+    :root{
+      --bg:#0f172a;           /* slate-900 */
+      --panel:#111827cc;      /* semi */
+      --text:#e5e7eb;         /* gray-200 */
+      --muted:#94a3b8;        /* slate-400 */
+      --accent:#22d3ee;       /* cyan-400 */
+      --accent-2:#a78bfa;     /* violet-400 */
+      --danger:#f87171;       /* red-400 */
+      --ok:#34d399;           /* emerald-400 */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 80% -10%, #1f2937 0%, var(--bg) 60%);
+      color:var(--text);
+      display:flex; align-items:center; justify-content:center; padding:24px;
+    }
+    .app{width: min(980px, 100%);}
+    header{display:flex; gap:14px; align-items:center; justify-content:space-between; margin-bottom:16px}
+    h1{font-size:clamp(20px, 4vw, 32px); margin:0; font-weight:800; letter-spacing:.2px}
+    .card{background:linear-gradient(180deg, #0b1021aa, #0b1021aa), radial-gradient(800px 400px at 0% 0%, #111827 0%, #0b1021 60%); border:1px solid #1f2937; backdrop-filter: blur(6px); border-radius:18px; padding:18px; box-shadow:0 10px 30px #00000055}
+    .row{display:grid; grid-template-columns:1.2fr .8fr; gap:16px}
+    .controls{display:grid; gap:12px}
+    label{font-size:14px; color:var(--muted)}
+    select, input[type="range"], button{width:100%}
+    select, input[type="number"], input[type="range"], button{
+      background:#0b1226; border:1px solid #1f2937; color:var(--text); border-radius:12px; padding:10px 12px; outline:none
+    }
+    button{cursor:pointer; font-weight:700}
+    button.primary{background:linear-gradient(90deg, var(--accent-2), var(--accent)); border:none}
+    button.secondary{background:#0b1226}
+
+    .meters{display:grid; grid-template-columns:1fr; gap:16px}
+    .bar-wrap{background:#0b1226; border:1px solid #1f2937; border-radius:14px; padding:12px}
+    .bar{height:22px; background:linear-gradient(90deg, var(--ok), #f59e0b, var(--danger)); border-radius:10px; width:0%}
+    .bar-grid{position:relative; height:22px}
+    .tick{position:absolute; top:0; bottom:0; width:2px; background:#ffffff22}
+    .tick span{position:absolute; top:26px; transform:translateX(-50%); font-size:12px; color:var(--muted)}
+
+    .readout{display:flex; align-items:baseline; gap:12px}
+    .db{font-size:48px; font-weight:900; letter-spacing:.5px}
+    .unit{color:var(--muted)}
+
+    canvas{width:100%; height:180px; background:#050a1a; border:1px solid #1f2937; border-radius:14px}
+
+    .pill{display:inline-flex; align-items:center; gap:8px; border:1px solid #1f2937; border-radius:999px; padding:8px 12px; background:#0b1226; color:var(--muted); font-size:13px}
+    .dot{width:9px; height:9px; border-radius:50%}
+    .dot.ok{background:var(--ok)}
+    .dot.bad{background:var(--danger)}
+
+    .footer{margin-top:10px; font-size:12px; color:var(--muted)}
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+
+    @media (max-width: 860px){ .row{grid-template-columns:1fr; } }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🔊 Sonomètre avec Alerte</h1>
-        <p>Mesure du niveau sonore en temps réel</p>
-        
-        <div class="meter">
-            <div class="level" id="level"></div>
+  <div class="app">
+    <header>
+      <h1>🔊 Sonomètre Web + Alerte</h1>
+      <div class="pill" id="status-pill"><span class="dot" id="status-dot"></span><span id="status-text">Inactif</span></div>
+    </header>
+
+    <div class="row">
+      <section class="card meters">
+        <div class="readout">
+          <div class="db" id="db">—</div>
+          <div class="unit">dBFS <span style="font-size:12px">(approx.)</span></div>
         </div>
-        
-        <div class="db-value" id="dbValue">0 dB</div>
-        
-        <div class="alert" id="alert" style="display: none;">⚠️ DÉPASSEMENT DU SEUIL !</div>
-        
-        <div class="threshold-control">
-            <label for="threshold">Seuil d'alerte (dB) :</label>
-            <input type="range" id="threshold" min="0" max="100" value="70">
-            <span id="thresholdValue">70 dB</span>
+        <div class="bar-wrap">
+          <div class="bar-grid" id="bar-grid">
+            <div class="bar" id="bar"></div>
+          </div>
         </div>
-        
-        <button id="startBtn">Démarrer le Micro</button>
+        <canvas id="history" height="160"></canvas>
+      </section>
+
+      <aside class="card controls">
+        <div>
+          <label for="device">Source microphone</label>
+          <select id="device"></select>
+        </div>
+
+        <div>
+          <label for="threshold">Seuil d'alerte (dBFS)</label>
+          <div class="grid2">
+            <input id="threshold" type="range" min="-90" max="0" step="1" value="-35" />
+            <input id="thresholdNum" type="number" min="-90" max="0" step="1" value="-35" />
+          </div>
+        </div>
+
+        <div class="grid2">
+          <button id="start" class="primary">▶️ Démarrer</button>
+          <button id="stop" class="secondary" disabled>⏹️ Stop</button>
+        </div>
+
+        <div>
+          <label><input type="checkbox" id="beepEnabled" checked> émettre un bip au‑dessus du seuil</label>
+        </div>
+        <div>
+          <label><input type="checkbox" id="vibrateEnabled"> vibrer (mobile)</label>
+        </div>
+        <div class="footer">⚠️ Mesure relative (dBFS) dépendante du micro et des réglages du système, pas un calibrage SPL absolu.</div>
+      </aside>
     </div>
 
-    <audio id="alertSound" src="https://assets.mixkit.co/active_storage/sfx/2129/2129-preview.mp3" preload="auto"></audio>
+    <div class="footer">Pour une meilleure précision, désactivez l'AGC, l'annulation d'écho et la réduction de bruit (déjà demandé ci‑dessous).</div>
+  </div>
 
-    <script>
-        const startBtn = document.getElementById('startBtn');
-        const dbValue = document.getElementById('dbValue');
-        const level = document.getElementById('level');
-        const alertDiv = document.getElementById('alert');
-        const thresholdSlider = document.getElementById('threshold');
-        const thresholdValue = document.getElementById('thresholdValue');
-        const alertSound = document.getElementById('alertSound');
+  <script>
+  // Utilitaires
+  const $ = (sel) => document.querySelector(sel);
+  const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
-        let audioContext;
-        let microphone;
-        let analyser;
-        let isRunning = false;
-        let lastAlertTime = 0;
+  const els = {
+    statusDot: $('#status-dot'),
+    statusText: $('#status-text'),
+    db: $('#db'),
+    bar: $('#bar'),
+    barGrid: $('#bar-grid'),
+    history: $('#history'),
+    deviceSel: $('#device'),
+    thresholdRange: $('#threshold'),
+    thresholdNum: $('#thresholdNum'),
+    startBtn: $('#start'),
+    stopBtn: $('#stop'),
+    beepEnabled: $('#beepEnabled'),
+    vibrateEnabled: $('#vibrateEnabled'),
+  };
 
-        // Mise à jour du seuil affiché
-        thresholdSlider.addEventListener('input', () => {
-            thresholdValue.textContent = `${thresholdSlider.value} dB`;
-        });
+  // Ajoute des repères sur la barre (de -60 à 0 dBFS)
+  function drawTicks(){
+    const grid = els.barGrid; grid.innerHTML = '';
+    const bar = document.createElement('div'); bar.className='bar'; bar.id='bar'; grid.appendChild(bar); els.bar = bar;
+    const ticks = [-60, -48, -36, -24, -12, -6, -3, 0];
+    ticks.forEach(val => {
+      const x = ((val + 90) / 90) * 100; // map [-90..0] -> [0..100]
+      const t = document.createElement('div'); t.className='tick'; t.style.left = x+'%';
+      const s = document.createElement('span'); s.textContent = val;
+      t.appendChild(s); grid.appendChild(t);
+    });
+  }
+  drawTicks();
 
-        // Démarrer/Arrêter le micro
-        startBtn.addEventListener('click', async () => {
-            if (!isRunning) {
-                try {
-                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    microphone = audioContext.createMediaStreamSource(stream);
-                    analyser = audioContext.createAnalyser();
-                    analyser.fftSize = 256;
-                    
-                    microphone.connect(analyser);
-                    
-                    const bufferLength = analyser.frequencyBinCount;
-                    const dataArray = new Uint8Array(bufferLength);
-                    
-                    isRunning = true;
-                    startBtn.textContent = "Arrêter le Micro";
-                    
-                    function updateMeter() {
-                        if (!isRunning) return;
-                        
-                        analyser.getByteFrequencyData(dataArray);
-                        let sum = 0;
-                        
-                        for (let i = 0; i < bufferLength; i++) {
-                            sum += dataArray[i];
-                        }
-                        
-                        const average = sum / bufferLength;
-                        const db = Math.round(average);
-                        
-                        dbValue.textContent = `${db} dB`;
-                        level.style.width = `${db}%`;
-                        
-                        // Vérifier le seuil d'alerte
-                        const threshold = parseInt(thresholdSlider.value);
-                        const now = Date.now();
-                        
-                        if (db > threshold) {
-                            alertDiv.style.display = 'block';
-                            // Éviter les bips trop rapprochés (min 1s)
-                            if (now - lastAlertTime > 1000) {
-                                alertSound.currentTime = 0;
-                                alertSound.play();
-                                lastAlertTime = now;
-                            }
-                        } else {
-                            alertDiv.style.display = 'none';
-                        }
-                        
-                        requestAnimationFrame(updateMeter);
-                    }
-                    
-                    updateMeter();
-                } catch (error) {
-                    alert("Erreur : " + error.message);
-                    console.error(error);
-                }
-            } else {
-                if (microphone) {
-                    microphone.disconnect();
-                }
-                isRunning = false;
-                startBtn.textContent = "Démarrer le Micro";
-                dbValue.textContent = "0 dB";
-                level.style.width = "0%";
-                alertDiv.style.display = 'none';
-            }
-        });
-    </script>
+  // Audio state
+  let ctx, analyser, srcNode, micStream;
+  let rafId = null;
+  let smoothingDb = -90; // EMA dBFS
+  const ema = 0.25;      // lissage
+  const floatBuf = new Float32Array(2048);
+
+  // Alerte (bip)
+  let lastBeep = 0;
+  const beepCooldownMs = 700;
+
+  function setStatus(active){
+    els.statusDot.className = 'dot ' + (active ? 'ok' : 'bad');
+    els.statusText.textContent = active ? 'En cours' : 'Inactif';
+  }
+
+  async function listDevices(){
+    try{
+      const devices = (await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==='audioinput');
+      els.deviceSel.innerHTML = '';
+      devices.forEach((d,i)=>{
+        const opt = document.createElement('option');
+        opt.value = d.deviceId; opt.textContent = d.label || `Microphone ${i+1}`;
+        els.deviceSel.appendChild(opt);
+      });
+    }catch(e){ console.warn('enumerateDevices:', e); }
+  }
+
+  async function start(){
+    try{
+      stop();
+      setStatus(false);
+      const deviceId = els.deviceSel.value || undefined;
+      micStream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          deviceId: deviceId ? {exact: deviceId} : undefined,
+          echoCancellation: false,
+          noiseSuppression: false,
+          autoGainControl: false
+        }, video:false
+      });
+
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = ctx.createAnalyser();
+      analyser.fftSize = 2048;
+      analyser.smoothingTimeConstant = 0; // on gère nous‑mêmes
+
+      srcNode = ctx.createMediaStreamSource(micStream);
+      srcNode.connect(analyser);
+
+      setStatus(true);
+      loop();
+    }catch(err){
+      alert('Accès micro refusé ou indisponible.\n' + err);
+      console.error(err);
+    }
+  }
+
+  function stop(){
+    if(rafId){ cancelAnimationFrame(rafId); rafId = null; }
+    if(srcNode){ try{ srcNode.disconnect(); }catch{} srcNode = null; }
+    if(micStream){ micStream.getTracks().forEach(t=>t.stop()); micStream = null; }
+    if(ctx){ try{ ctx.close(); }catch{} ctx = null; }
+    setStatus(false);
+  }
+
+  function rmsDbFS(){
+    if(!analyser) return -90;
+    analyser.getFloatTimeDomainData(floatBuf);
+    let sum = 0, peak = 0;
+    for(let i=0;i<floatBuf.length;i++){
+      const v = floatBuf[i]; sum += v*v; if(Math.abs(v)>peak) peak = Math.abs(v);
+    }
+    const rms = Math.sqrt(sum / floatBuf.length) || 1e-8; // éviter log(0)
+    // dBFS = 20*log10(rms) (0 dBFS ≈ pleine échelle numérique)
+    const db = 20 * Math.log10(rms);
+    return {db, peak};
+  }
+
+  function mapDbToPct(db){
+    // clamp [-90..0] -> [0..100]
+    const cl = Math.max(-90, Math.min(0, db));
+    return ((cl + 90) / 90) * 100;
+  }
+
+  function maybeBeep(triggerNow){
+    const now = performance.now();
+    if(!els.beepEnabled.checked) return;
+    if(now - lastBeep < beepCooldownMs && !triggerNow) return;
+    lastBeep = now;
+    if(!ctx){ return; }
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    // petit "ping" court pour éviter le larsen
+    osc.type = 'sine';
+    osc.frequency.value = 1400;
+    g.gain.setValueAtTime(0, ctx.currentTime);
+    g.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.12);
+    osc.connect(g).connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.14);
+    if(navigator.vibrate && els.vibrateEnabled.checked){
+      navigator.vibrate(80);
+    }
+  }
+
+  function drawHistory(valDb){
+    const c = els.history, w = c.width = c.clientWidth * devicePixelRatio, h = c.height = c.clientHeight * devicePixelRatio;
+    const ctx2d = c.getContext('2d');
+    ctx2d.clearRect(0,0,w,h);
+    // grid
+    ctx2d.globalAlpha = .3; ctx2d.strokeStyle = '#223';
+    for(let y=0;y<=6;y++){
+      const yy = (y/6)*h; ctx2d.beginPath(); ctx2d.moveTo(0,yy); ctx2d.lineTo(w,yy); ctx2d.stroke();
+    }
+    ctx2d.globalAlpha = 1;
+    // trail buffer in closure
+  }
+
+  const trail = new Float32Array(600).fill(-90);
+  let trailIdx = 0;
+  function pushTrail(db){
+    trail[trailIdx] = db; trailIdx = (trailIdx + 1) % trail.length;
+  }
+  function paintTrail(){
+    const c = els.history; const ctx2d = c.getContext('2d');
+    const w = c.width, h = c.height;
+    ctx2d.save();
+    ctx2d.lineWidth = 2 * devicePixelRatio; ctx2d.beginPath();
+    for(let i=0;i<trail.length;i++){
+      const idx = (trailIdx + i) % trail.length;
+      const db = Math.max(-90, Math.min(0, trail[idx]));
+      const x = (i/(trail.length-1)) * w;
+      const y = h - ((db + 90)/90) * h;
+      if(i===0) ctx2d.moveTo(x,y); else ctx2d.lineTo(x,y);
+    }
+    ctx2d.strokeStyle = '#a78bfa'; ctx2d.stroke();
+    ctx2d.restore();
+  }
+
+  function loop(){
+    const {db, peak} = rmsDbFS();
+    // lissage EMA sur les dB
+    smoothingDb = (1-ema)*smoothingDb + ema*db;
+
+    // MAJ UI
+    els.db.textContent = Number.isFinite(smoothingDb) ? smoothingDb.toFixed(1) : '—';
+    const pct = mapDbToPct(smoothingDb);
+    els.bar.style.width = pct + '%';
+
+    // seuil
+    const thresh = parseFloat(els.thresholdRange.value);
+    if(smoothingDb >= thresh){
+      els.bar.style.boxShadow = '0 0 18px #f87171aa';
+      maybeBeep(false);
+    }else{
+      els.bar.style.boxShadow = 'none';
+    }
+
+    // clipping indicatif
+    if(peak > 0.97){ els.db.style.color = 'var(--danger)'; } else { els.db.style.color = 'var(--text)'; }
+
+    // historique
+    pushTrail(smoothingDb); paintTrail();
+
+    rafId = requestAnimationFrame(loop);
+  }
+
+  // Liaisons UI
+  els.startBtn.addEventListener('click', async ()=>{ await start(); els.startBtn.disabled = true; els.stopBtn.disabled = false; if(ctx && ctx.state==='suspended'){ await ctx.resume(); } });
+  els.stopBtn.addEventListener('click', ()=>{ stop(); els.startBtn.disabled = false; els.stopBtn.disabled = true; });
+
+  els.thresholdRange.addEventListener('input', e=>{ els.thresholdNum.value = e.target.value; maybeBeep(true); });
+  els.thresholdNum.addEventListener('input', e=>{ let v = Math.max(-90, Math.min(0, parseFloat(e.target.value)||-35)); els.thresholdRange.value = v; });
+
+  els.deviceSel.addEventListener('change', ()=>{ if(els.stopBtn.disabled===false) start(); });
+
+  // Préparer la liste de micros dès qu'on a une autorisation (labels visibles)
+  if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+    navigator.mediaDevices.getUserMedia({audio:true, video:false}).then(stream=>{
+      stream.getTracks().forEach(t=>t.stop());
+      listDevices();
+    }).catch(()=> listDevices());
+  }
+
+  // Redessiner l'historique aux resize
+  window.addEventListener('resize', ()=> drawHistory());
+  drawHistory();
+
+  // Conseils https/localhost
+  if(location.protocol !== 'https:' && location.hostname !== 'localhost'){
+    const warn = document.createElement('div');
+    warn.className = 'footer';
+    warn.style.color = 'var(--danger)';
+    warn.textContent = 'Astuce: l’accès micro exige HTTPS (ou localhost).';
+    document.querySelector('.app').appendChild(warn);
+  }
+  </script>
 </body>
 </html>
