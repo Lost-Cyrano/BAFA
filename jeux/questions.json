@@ -41,6 +41,10 @@
       "answer": "Mystère de l'univers (ou parce qu'elles sèchent la saleté qu'on a oublié)."
     },
     {
+      "question": "Si tu avais un superpouvoir inutile, ce serait lequel ?",
+      "answer": "Aucune mais tu regardes si t'aimes la réponse"
+    },
+    {
       "question": "Si une poule et demie pond un œuf et demi en un jour et demi, combien d'œufs pondent 6 poules en 6 jours ?",
       "answer": "24 œufs."
     },
@@ -69,7 +73,7 @@
       "answer": "Bruxelles"
     },
     {
-      "question": "Un homme et son fils ont un accident de voiture. Le père meurt sur le coup. Le fils est transporté à l'hôpital en urgence. Le chirurgien qui arrive dit : 'Je ne peux pas l'opérer, c'est mon fils !' Comment est-ce possible ?",
+      "question": "Un homme et son fils ont un accident de voiture. Le père meurt sur le coup. Le fils est transporté à l'hôpital en urgence. Le chirurgien qui arrive dit : \"Je ne peux pas l'opérer, c'est mon fils !\" Comment est-ce possible ?",
       "answer": "Le chirurgien est sa mère"
     }
   ]
