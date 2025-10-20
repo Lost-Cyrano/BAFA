@@ -77,6 +77,55 @@
       "answer": "Le chirurgien est sa mère"
     },
     {
+      "question": "Combien de doigts possède la main de Mickey Mouse ?",
+      "answer": "4 doigts"
+    },{
+      "question": "Quel animal est représenté sur le drapeau du Pays de Galles ?",
+      "answer": "Un dragon"
+    },{
+      "question": "Dans quel aliment trouve-t-on de la lactoferrine ?",
+      "answer": "Le lait"
+    },{
+      "question": "Combien de joueurs y a-t-il dans une équipe de water-polo ?",
+      "answer": "7 joueurs"
+    },
+      "question": "Quelle est la plus grande île de la Méditerranée ?",
+      "answer": "La Sicile"
+    },{
+      "question": "Quel inventeur a donné son nom à une unité de tension électrique ?",
+      "answer": "Alessandro Volta"
+    },
+    {
+      "question": "Dans la série Friends, quel est le nom du singe de Ross ?",
+      "answer": "Marcel"
+    },{
+      "question": "Combien de cœurs possède un poulpe ?",
+      "answer": "3 cœurs"
+    },
+    {
+      "question": "Quelle est la seule lettre qui n'apparaît pas dans les noms des départements français ?",
+      "answer": "La lettre K"
+    },{
+      "question": "Quel animal est le plus proche parent de la baleine ?",
+      "answer": "L'hippopotame"
+    },
+    {
+      "question": "Dans Harry Potter, quel sortilège permet de faire la lumière ?",
+      "answer": "Lumos"
+    },
+    {
+      "question": "Quelle est la plus petite unité de mesure informatique ?",
+      "answer": "Le bit"
+    },
+    {
+      "question": "Quel fruit est surnommé 'la reine des fruits' en Asie du Sud-Est ?",
+      "answer": "Le mangoustan"
+    },
+    {
+      "question": "Combien de temps met la lumière du Soleil pour nous parvenir ?",
+      "answer": "Environ 8 minutes"
+    },
+    {
       "question": "Dans Fort Boyard, quel objet les candidats doivent-ils récupérer pour prouver leur courage au Père Fouras ?",
       "answer": "Les clés"
     },
