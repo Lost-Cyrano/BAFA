@@ -1,0 +1,76 @@
+{
+  "questions": [
+    {
+      "question": "Si un avion s'écrase exactement sur la frontière entre la France et l'Espagne, où enterre-t-on les survivants ?",
+      "answer": "On n'enterre pas les survivants."
+    },
+    {
+      "question": "Combien de mois ont 28 jours ?",
+      "answer": "Tous les mois (12)."
+    },
+    {
+      "question": "Combien de fois peut-on soustraire 5 de 25 ?",
+      "answer": "Une seule fois (après on soustrait 5 de 20, etc.)"
+    },
+    {
+      "question": "Si trois chats attrapent trois souris en trois minutes, combien de temps mettront 100 chats pour attraper 100 souris ?",
+      "answer": "3 minutes."
+    },
+    {
+      "question": "Quel nombre suit la suite 1 (un), 11 (un un), 21 (deux un), 1211 (un deux, un un), 111221 (un un, un deux, deux un), ... ?",
+      "answer": "312211 (trois, un, deux deux, un un)"
+    },
+    {
+      "question": "Qu'est-ce qui est mou quand c'est chaud et dur quand c'est froid ?",
+      "answer": "Le chewing-gum"
+    },
+    {
+      "question": "En moyenne, quelle est la taille d'un zizi en érection, selon les études sérieuses ?",
+      "answer": "Environ 13 cm"
+    },
+    {
+      "question": "Quel est le fruit préféré des ordinateurs ?",
+      "answer": "La pomme"
+    },
+    {
+      "question": "Quelle partie de ton corps peut doubler de taille quand tu as chaud ?",
+      "answer": "Tes pupilles"
+    },
+    {
+      "question": "Pourquoi les serviettes de bain se salissent si on sort propre de la douche ?",
+      "answer": "Mystère de l'univers (ou parce qu'elles sèchent la saleté qu'on a oublié)."
+    },
+    {
+      "question": "Si une poule et demie pond un œuf et demi en un jour et demi, combien d'œufs pondent 6 poules en 6 jours ?",
+      "answer": "24 œufs."
+    },
+    {
+      "question": "Si tu mélanges du rouge et du bleu, quelle couleur obtiens-tu ?",
+      "answer": "Violet"
+    },
+    {
+      "question": "Un fermier a 15 vaches. Toutes sauf 8 meurent. Combien lui reste-t-il de vaches ?",
+      "answer": "8 vaches."
+    },
+    {
+      "question": "Est-il possible de se noyer dans la Fontaine de Jouvence ?",
+      "answer": "Oui. L'eau de la fontaine vous rend immortellement jeune, mais elle ne vous empêche pas de mourir étouffé sous l'eau. Elle rajeunit un cadavre, c'est tout !"
+    },
+    {
+      "question": "Vous êtes en 3ème position dans une course. Vous doublez le 2ème. Quelle est votre nouvelle position ?",
+      "answer": "2ème"
+    },
+    {
+      "question": "Le père de Maxime a 4 fils : Sifredi, Sifredo, Sifreda... Comment s'appelle le quatrième ?",
+      "answer": "Maxime"
+    },
+    {
+      "question": "Quelle est la capitale de la Belgique ?",
+      "answer": "Bruxelles"
+    },
+    {
+      "question": "Un homme et son fils ont un accident de voiture. Le père meurt sur le coup. Le fils est transporté à l'hôpital en urgence. Le chirurgien qui arrive dit : 'Je ne peux pas l'opérer, c'est mon fils !' Comment est-ce possible ?",
+      "answer": "Le chirurgien est sa mère"
+    }
+  ]
+}
