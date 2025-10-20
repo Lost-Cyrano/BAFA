@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Déstabilisant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .questions-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            padding: 10px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+        }
+
+        .card.flipped {
+            background: #f8f9fa;
+            border-left: 5px solid #6a11cb;
+        }
+
+        .question {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        .answer {
+            font-size: 1.1em;
+            color: #6a11cb;
+            font-style: italic;
+            line-height: 1.4;
+            text-align: center;
+            display: none;
+        }
+
+        .card.flipped .question {
+            display: none;
+        }
+
+        .card.flipped .answer {
+            display: block;
+        }
+
+        .card-number {
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            background: rgba(106, 17, 203, 0.1);
+            color: #6a11cb;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .flip-indicator {
+            position: absolute;
+            bottom: 10px;
+            right: 15px;
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: 1.2em;
+            padding: 50px;
+        }
+
+        .error {
+            text-align: center;
+            color: #ff6b6b;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* Responsive pour tablettes */
+        @media (min-width: 768px) {
+            .questions-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+                padding: 20px;
+            }
+            
+            .card {
+                min-height: 150px;
+                padding: 25px;
+            }
+        }
+
+        /* Responsive pour grands écrans */
+        @media (min-width: 1200px) {
+            .questions-grid {
+                grid-template-columns: repeat(3, 1fr);
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="loading" class="loading">Chargement des questions...</div>
+        <div id="questions-container" class="questions-grid" style="display: none;"></div>
+        <div id="error" class="error" style="display: none;"></div>
+    </div>
+
+    <script>
+        // Charger les questions depuis le fichier JSON
+        async function loadQuestions() {
+            try {
+                const response = await fetch('questions.json');
+                
+                if (!response.ok) {
+                    throw new Error('Erreur de chargement des questions');
+                }
+                
+                const data = await response.json();
+                displayAllQuestions(data.questions);
+                
+            } catch (error) {
+                showError('Impossible de charger les questions. Vérifiez que le fichier questions.json est présent.');
+                console.error('Erreur:', error);
+            }
+        }
+
+        // Afficher toutes les questions
+        function displayAllQuestions(questions) {
+            const container = document.getElementById('questions-container');
+            const loading = document.getElementById('loading');
+            
+            // Cacher le loading et afficher le conteneur
+            loading.style.display = 'none';
+            container.style.display = 'grid';
+            
+            // Générer les cartes pour chaque question
+            questions.forEach((question, index) => {
+                const card = document.createElement('div');
+                card.className = 'card fade-in';
+                card.style.animationDelay = `${index * 0.1}s`;
+                
+                card.innerHTML = `
+                    <div class="card-number">${index + 1}</div>
+                    <div class="question">${question.question}</div>
+                    <div class="answer">${question.answer}</div>
+                    <div class="flip-indicator">👆 Toucher pour retourner</div>
+                `;
+                
+                // Ajouter l'événement de clic
+                card.addEventListener('click', () => {
+                    card.classList.toggle('flipped');
+                });
+                
+                container.appendChild(card);
+            });
+        }
+
+        // Afficher une erreur
+        function showError(message) {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            
+            loading.style.display = 'none';
+            error.style.display = 'block';
+            error.textContent = message;
+        }
+
+        // Démarrer le chargement des questions
+        document.addEventListener('DOMContentLoaded', loadQuestions);
+    </script>
+</body>
+</html>
